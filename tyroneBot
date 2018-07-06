@@ -1,0 +1,26 @@
+#!/usr/bin/python3
+
+#A file for daemonizing tyroneBot
+
+import daemon
+import daemon.pidfile as pidfile
+import signal
+
+#Signal handlers
+def sigstp_handler():
+    tyrone_pause()
+
+def sigterm_handler():
+    tyrone_kill()
+
+#Main()
+daemon = daemon.DaemonContext()
+daemon.pidfile = pidfile.PIDLockFile('/var/run/tyrone.pid')
+#daemon.detach_process = True
+daemon.stdout = open("/var/log/tyrone.log", 'a+')
+#daemon.signal_map = {signal.SIGTERM: sigterm_handler}
+daemon.open()
+
+with daemon:
+    import tyrone
+
